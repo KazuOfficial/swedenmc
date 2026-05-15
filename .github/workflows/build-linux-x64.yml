@@ -1,0 +1,102 @@
+name: Build Linux x64
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            clang cmake \
+            libminizip-dev libcurl4-openssl-dev zlib1g-dev \
+            libgl1-mesa-dev \
+            libx11-dev libxrandr-dev libxi-dev libxinerama-dev libxcursor-dev \
+            libwayland-dev libxkbcommon-dev
+
+      - name: Get submodule hashes
+        id: hashes
+        run: |
+          echo "bgfx=$(git -C lib/bgfx rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "glfw=$(git -C lib/glfw rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "openal=$(git -C lib/openal-soft rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Cache bgfx
+        uses: actions/cache@v4
+        with:
+          path: lib/bgfx/.build/linux64_clang
+          key: bgfx-linux-x64-${{ steps.hashes.outputs.bgfx }}
+          restore-keys: bgfx-linux-x64-
+
+      - name: Cache GLFW
+        uses: actions/cache@v4
+        with:
+          path: lib/glfw/build
+          key: glfw-linux-x64-${{ steps.hashes.outputs.glfw }}
+
+      - name: Cache OpenAL
+        uses: actions/cache@v4
+        with:
+          path: lib/openal-soft/build
+          key: openal-linux-x64-${{ steps.hashes.outputs.openal }}
+
+      - name: Cache shaders
+        uses: actions/cache@v4
+        with:
+          path: src/shaders/*.h
+          key: shaders-linux-x64-${{ steps.hashes.outputs.bgfx }}-${{ hashFiles('src/shaders/*.sc', 'src/shaders/varying.def.sc') }}
+          restore-keys: shaders-linux-x64-${{ steps.hashes.outputs.bgfx }}-
+
+      - name: Build deps
+        run: make -j$(nproc) deps
+
+      - name: Build shaders
+        run: make -j$(nproc) shaders
+
+      - name: Build
+        run: |
+          make -j$(nproc)
+          test -f bin/swedenmc
+
+      - name: Package artifact
+        run: |
+          mkdir -p release
+          cp bin/swedenmc release/swedenmc-linux-x64
+          tar -czf swedenmc-linux-x64.tar.gz -C release swedenmc-linux-x64
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: swedenmc-linux-x64
+          path: swedenmc-linux-x64.tar.gz
+          retention-days: 30
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: swedenmc-linux-x64
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: swedenmc-linux-x64.tar.gz
+          generate_release_notes: true

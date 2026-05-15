@@ -1,0 +1,178 @@
+#ifndef NET_HANDLER_H
+#define NET_HANDLER_H
+
+typedef struct Packet51MapChunk Packet51MapChunk;
+typedef struct Packet255KickDisconnect Packet255KickDisconnect;
+typedef struct Packet1Login Packet1Login;
+typedef struct Packet10Flying Packet10Flying;
+typedef struct Packet52MultiBlockChange Packet52MultiBlockChange;
+typedef struct Packet14BlockDig Packet14BlockDig;
+typedef struct Packet53BlockChange Packet53BlockChange;
+typedef struct Packet50PreChunk Packet50PreChunk;
+typedef struct Packet20NamedEntitySpawn Packet20NamedEntitySpawn;
+typedef struct Packet30Entity Packet30Entity;
+typedef struct Packet34EntityTeleport Packet34EntityTeleport;
+typedef struct Packet15Place Packet15Place;
+typedef struct Packet16BlockItemSwitch Packet16BlockItemSwitch;
+typedef struct Packet29DestroyEntity Packet29DestroyEntity;
+typedef struct Packet21PickupSpawn Packet21PickupSpawn;
+typedef struct Packet22Collect Packet22Collect;
+typedef struct Packet3Chat Packet3Chat;
+typedef struct Packet23VehicleSpawn Packet23VehicleSpawn;
+typedef struct Packet18Animation Packet18Animation;
+typedef struct Packet19EntityAction Packet19EntityAction;
+typedef struct Packet2Handshake Packet2Handshake;
+typedef struct Packet24MobSpawn Packet24MobSpawn;
+typedef struct Packet4UpdateTime Packet4UpdateTime;
+typedef struct Packet6SpawnPosition Packet6SpawnPosition;
+typedef struct Packet28EntityVelocity Packet28EntityVelocity;
+typedef struct Packet40EntityMetadata Packet40EntityMetadata;
+typedef struct Packet39AttachEntity Packet39AttachEntity;
+typedef struct Packet7UseEntity Packet7UseEntity;
+typedef struct Packet38EntityStatus Packet38EntityStatus;
+typedef struct Packet8UpdateHealth Packet8UpdateHealth;
+typedef struct Packet9Respawn Packet9Respawn;
+typedef struct Packet60Explosion Packet60Explosion;
+typedef struct Packet100OpenWindow Packet100OpenWindow;
+typedef struct Packet101CloseWindow Packet101CloseWindow;
+typedef struct Packet102WindowClick Packet102WindowClick;
+typedef struct Packet103SetSlot Packet103SetSlot;
+typedef struct Packet104WindowItems Packet104WindowItems;
+typedef struct Packet130UpdateSign Packet130UpdateSign;
+typedef struct Packet105UpdateProgressbar Packet105UpdateProgressbar;
+typedef struct Packet5PlayerInventory Packet5PlayerInventory;
+typedef struct Packet106Transaction Packet106Transaction;
+typedef struct Packet25EntityPainting Packet25EntityPainting;
+typedef struct Packet54PlayNoteBlock Packet54PlayNoteBlock;
+typedef struct Packet200Statistic Packet200Statistic;
+typedef struct Packet17Sleep Packet17Sleep;
+typedef struct Packet27Position Packet27Position;
+typedef struct Packet70Bed Packet70Bed;
+typedef struct Packet71Weather Packet71Weather;
+typedef struct Packet131MapData Packet131MapData;
+typedef struct Packet61DoorChange Packet61DoorChange;
+typedef struct Packet Packet;
+
+typedef struct NetHandler NetHandler;
+
+typedef struct NetHandler_vtable {
+
+    int (*isServerHandler)(NetHandler *self);
+
+    void (*handleMapChunk)(NetHandler *self, Packet51MapChunk *var1);
+
+    void (*registerPacket)(NetHandler *self, Packet *var1);
+
+    void (*handleErrorMessage)(NetHandler *self, const char *var1, const char *var2);
+    void (*handleKickDisconnect)(NetHandler *self, Packet255KickDisconnect *var1);
+    void (*handleLogin)(NetHandler *self, Packet1Login *var1);
+    void (*handleFlying)(NetHandler *self, Packet10Flying *var1);
+    void (*handleMultiBlockChange)(NetHandler *self, Packet52MultiBlockChange *var1);
+    void (*handleBlockDig)(NetHandler *self, Packet14BlockDig *var1);
+    void (*handleBlockChange)(NetHandler *self, Packet53BlockChange *var1);
+    void (*handlePreChunk)(NetHandler *self, Packet50PreChunk *var1);
+    void (*handleNamedEntitySpawn)(NetHandler *self, Packet20NamedEntitySpawn *var1);
+    void (*handleEntity)(NetHandler *self, Packet30Entity *var1);
+    void (*handleEntityTeleport)(NetHandler *self, Packet34EntityTeleport *var1);
+    void (*handlePlace)(NetHandler *self, Packet15Place *var1);
+    void (*handleBlockItemSwitch)(NetHandler *self, Packet16BlockItemSwitch *var1);
+    void (*handleDestroyEntity)(NetHandler *self, Packet29DestroyEntity *var1);
+    void (*handlePickupSpawn)(NetHandler *self, Packet21PickupSpawn *var1);
+    void (*handleCollect)(NetHandler *self, Packet22Collect *var1);
+    void (*handleChat)(NetHandler *self, Packet3Chat *var1);
+    void (*handleVehicleSpawn)(NetHandler *self, Packet23VehicleSpawn *var1);
+    void (*handleArmAnimation)(NetHandler *self, Packet18Animation *var1);
+    void (*func_21147_a)(NetHandler *self, Packet19EntityAction *var1);
+    void (*handleHandshake)(NetHandler *self, Packet2Handshake *var1);
+    void (*handleMobSpawn)(NetHandler *self, Packet24MobSpawn *var1);
+    void (*handleUpdateTime)(NetHandler *self, Packet4UpdateTime *var1);
+    void (*handleSpawnPosition)(NetHandler *self, Packet6SpawnPosition *var1);
+    void (*func_6498_a)(NetHandler *self, Packet28EntityVelocity *var1);
+    void (*func_21148_a)(NetHandler *self, Packet40EntityMetadata *var1);
+    void (*func_6497_a)(NetHandler *self, Packet39AttachEntity *var1);
+    void (*handleUseEntity)(NetHandler *self, Packet7UseEntity *var1);
+    void (*func_9447_a)(NetHandler *self, Packet38EntityStatus *var1);
+    void (*handleHealth)(NetHandler *self, Packet8UpdateHealth *var1);
+    void (*func_9448_a)(NetHandler *self, Packet9Respawn *var1);
+    void (*func_12245_a)(NetHandler *self, Packet60Explosion *var1);
+    void (*func_20087_a)(NetHandler *self, Packet100OpenWindow *var1);
+    void (*func_20092_a)(NetHandler *self, Packet101CloseWindow *var1);
+    void (*func_20091_a)(NetHandler *self, Packet102WindowClick *var1);
+    void (*func_20088_a)(NetHandler *self, Packet103SetSlot *var1);
+    void (*func_20094_a)(NetHandler *self, Packet104WindowItems *var1);
+    void (*handleSignUpdate)(NetHandler *self, Packet130UpdateSign *var1);
+    void (*func_20090_a)(NetHandler *self, Packet105UpdateProgressbar *var1);
+    void (*handlePlayerInventory)(NetHandler *self, Packet5PlayerInventory *var1);
+    void (*func_20089_a)(NetHandler *self, Packet106Transaction *var1);
+    void (*func_21146_a)(NetHandler *self, Packet25EntityPainting *var1);
+    void (*handleNotePlay)(NetHandler *self, Packet54PlayNoteBlock *var1);
+    void (*func_27245_a)(NetHandler *self, Packet200Statistic *var1);
+    void (*func_22186_a)(NetHandler *self, Packet17Sleep *var1);
+    void (*func_22185_a)(NetHandler *self, Packet27Position *var1);
+    void (*func_25118_a)(NetHandler *self, Packet70Bed *var1);
+    void (*handleWeather)(NetHandler *self, Packet71Weather *var1);
+    void (*func_28116_a)(NetHandler *self, Packet131MapData *var1);
+    void (*func_28115_a)(NetHandler *self, Packet61DoorChange *var1);
+} NetHandler_vtable;
+
+struct NetHandler {
+    NetHandler_vtable *vtable;
+};
+
+extern NetHandler_vtable NetHandler_defaultVtable;
+
+int NetHandler_isServerHandler(NetHandler *self);
+void NetHandler_handleMapChunk(NetHandler *self, Packet51MapChunk *var1);
+void NetHandler_registerPacket(NetHandler *self, Packet *var1);
+void NetHandler_handleErrorMessage(NetHandler *self, const char *var1, const char *var2);
+void NetHandler_handleKickDisconnect(NetHandler *self, Packet255KickDisconnect *var1);
+void NetHandler_handleLogin(NetHandler *self, Packet1Login *var1);
+void NetHandler_handleFlying(NetHandler *self, Packet10Flying *var1);
+void NetHandler_handleMultiBlockChange(NetHandler *self, Packet52MultiBlockChange *var1);
+void NetHandler_handleBlockDig(NetHandler *self, Packet14BlockDig *var1);
+void NetHandler_handleBlockChange(NetHandler *self, Packet53BlockChange *var1);
+void NetHandler_handlePreChunk(NetHandler *self, Packet50PreChunk *var1);
+void NetHandler_handleNamedEntitySpawn(NetHandler *self, Packet20NamedEntitySpawn *var1);
+void NetHandler_handleEntity(NetHandler *self, Packet30Entity *var1);
+void NetHandler_handleEntityTeleport(NetHandler *self, Packet34EntityTeleport *var1);
+void NetHandler_handlePlace(NetHandler *self, Packet15Place *var1);
+void NetHandler_handleBlockItemSwitch(NetHandler *self, Packet16BlockItemSwitch *var1);
+void NetHandler_handleDestroyEntity(NetHandler *self, Packet29DestroyEntity *var1);
+void NetHandler_handlePickupSpawn(NetHandler *self, Packet21PickupSpawn *var1);
+void NetHandler_handleCollect(NetHandler *self, Packet22Collect *var1);
+void NetHandler_handleChat(NetHandler *self, Packet3Chat *var1);
+void NetHandler_handleVehicleSpawn(NetHandler *self, Packet23VehicleSpawn *var1);
+void NetHandler_handleArmAnimation(NetHandler *self, Packet18Animation *var1);
+void NetHandler_func_21147_a(NetHandler *self, Packet19EntityAction *var1);
+void NetHandler_handleHandshake(NetHandler *self, Packet2Handshake *var1);
+void NetHandler_handleMobSpawn(NetHandler *self, Packet24MobSpawn *var1);
+void NetHandler_handleUpdateTime(NetHandler *self, Packet4UpdateTime *var1);
+void NetHandler_handleSpawnPosition(NetHandler *self, Packet6SpawnPosition *var1);
+void NetHandler_func_6498_a(NetHandler *self, Packet28EntityVelocity *var1);
+void NetHandler_func_21148_a(NetHandler *self, Packet40EntityMetadata *var1);
+void NetHandler_func_6497_a(NetHandler *self, Packet39AttachEntity *var1);
+void NetHandler_handleUseEntity(NetHandler *self, Packet7UseEntity *var1);
+void NetHandler_func_9447_a(NetHandler *self, Packet38EntityStatus *var1);
+void NetHandler_handleHealth(NetHandler *self, Packet8UpdateHealth *var1);
+void NetHandler_func_9448_a(NetHandler *self, Packet9Respawn *var1);
+void NetHandler_func_12245_a(NetHandler *self, Packet60Explosion *var1);
+void NetHandler_func_20087_a(NetHandler *self, Packet100OpenWindow *var1);
+void NetHandler_func_20092_a(NetHandler *self, Packet101CloseWindow *var1);
+void NetHandler_func_20091_a(NetHandler *self, Packet102WindowClick *var1);
+void NetHandler_func_20088_a(NetHandler *self, Packet103SetSlot *var1);
+void NetHandler_func_20094_a(NetHandler *self, Packet104WindowItems *var1);
+void NetHandler_handleSignUpdate(NetHandler *self, Packet130UpdateSign *var1);
+void NetHandler_func_20090_a(NetHandler *self, Packet105UpdateProgressbar *var1);
+void NetHandler_handlePlayerInventory(NetHandler *self, Packet5PlayerInventory *var1);
+void NetHandler_func_20089_a(NetHandler *self, Packet106Transaction *var1);
+void NetHandler_func_21146_a(NetHandler *self, Packet25EntityPainting *var1);
+void NetHandler_handleNotePlay(NetHandler *self, Packet54PlayNoteBlock *var1);
+void NetHandler_func_27245_a(NetHandler *self, Packet200Statistic *var1);
+void NetHandler_func_22186_a(NetHandler *self, Packet17Sleep *var1);
+void NetHandler_func_22185_a(NetHandler *self, Packet27Position *var1);
+void NetHandler_func_25118_a(NetHandler *self, Packet70Bed *var1);
+void NetHandler_handleWeather(NetHandler *self, Packet71Weather *var1);
+void NetHandler_func_28116_a(NetHandler *self, Packet131MapData *var1);
+void NetHandler_func_28115_a(NetHandler *self, Packet61DoorChange *var1);
+
+#endif

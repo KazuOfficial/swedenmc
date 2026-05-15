@@ -1,0 +1,6 @@
+-std=c99
+-Ilib/glad/include
+-Ilib/glfw/include
+-Ilib/cglm/include
+-Ilib/openal-soft/include
+-Ilib

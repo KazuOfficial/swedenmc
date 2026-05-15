@@ -1,0 +1,14 @@
+#ifndef J_JSON_NODE_DOES_NOT_MATCH_JSON_NODE_SELECTOR_EXCEPTION_H
+#define J_JSON_NODE_DOES_NOT_MATCH_JSON_NODE_SELECTOR_EXCEPTION_H
+
+typedef struct J_JsonNodeDoesNotMatchJsonNodeSelectorException {
+    char message[512];
+} J_JsonNodeDoesNotMatchJsonNodeSelectorException;
+
+void J_JsonNodeDoesNotMatchJsonNodeSelectorException_init(
+    J_JsonNodeDoesNotMatchJsonNodeSelectorException *self, const char *msg);
+
+struct J_JsonNodeDoesNotMatchChainedJsonNodeSelectorException;
+extern struct J_JsonNodeDoesNotMatchChainedJsonNodeSelectorException *J_ChainedException_pending;
+
+#endif

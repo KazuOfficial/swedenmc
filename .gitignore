@@ -1,0 +1,8 @@
+.claude/
+.agents/
+.DS_Store
+bin/
+build/
+assets/
+*.dSYM
+src/**/*.o

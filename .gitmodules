@@ -1,0 +1,15 @@
+[submodule "lib/glfw"]
+	path = lib/glfw
+	url = https://github.com/glfw/glfw
+[submodule "lib/openal-soft"]
+	path = lib/openal-soft
+	url = https://github.com/kcat/openal-soft
+[submodule "lib/bx"]
+	path = lib/bx
+	url = https://github.com/bkaradzic/bx
+[submodule "lib/bimg"]
+	path = lib/bimg
+	url = https://github.com/bkaradzic/bimg
+[submodule "lib/bgfx"]
+	path = lib/bgfx
+	url = https://github.com/bkaradzic/bgfx

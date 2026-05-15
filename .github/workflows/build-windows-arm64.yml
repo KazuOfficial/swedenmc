@@ -1,0 +1,123 @@
+name: Build Windows ARM64
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-11-arm
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: CLANGARM64
+          update: true
+          cache: true
+          install: >-
+            mingw-w64-clang-aarch64-clang
+            mingw-w64-clang-aarch64-llvm
+            mingw-w64-clang-aarch64-cmake
+            mingw-w64-clang-aarch64-make
+            mingw-w64-clang-aarch64-pkgconf
+            make
+            mingw-w64-clang-aarch64-minizip
+            mingw-w64-clang-aarch64-curl
+            mingw-w64-clang-aarch64-zlib
+            rsync
+
+      - name: Provide strip
+        run: ln -sf "$(which llvm-strip)" /usr/bin/strip
+
+      - name: Get submodule hashes
+        id: hashes
+        run: |
+          echo "bgfx=$(git -C lib/bgfx rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "glfw=$(git -C lib/glfw rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "openal=$(git -C lib/openal-soft rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Cache bgfx
+        uses: actions/cache@v4
+        with:
+          path: lib/bgfx/.build/win64_mingw-clang
+          key: bgfx-windows-arm64-${{ steps.hashes.outputs.bgfx }}
+          restore-keys: bgfx-windows-arm64-
+
+      - name: Cache GLFW
+        uses: actions/cache@v4
+        with:
+          path: lib/glfw/build
+          key: glfw-windows-arm64-${{ steps.hashes.outputs.glfw }}
+
+      - name: Cache OpenAL
+        uses: actions/cache@v4
+        with:
+          path: lib/openal-soft/build
+          key: openal-windows-arm64-${{ steps.hashes.outputs.openal }}
+
+      - name: Cache shaders
+        uses: actions/cache@v4
+        with:
+          path: src/shaders/*.h
+          key: shaders-windows-arm64-${{ steps.hashes.outputs.bgfx }}-${{ hashFiles('src/shaders/*.sc', 'src/shaders/varying.def.sc') }}
+          restore-keys: shaders-windows-arm64-${{ steps.hashes.outputs.bgfx }}-
+
+      - name: Build deps
+        run: |
+          export CLANG=$MINGW_PREFIX
+          make -j$(nproc) MACHINE=aarch64 deps
+
+      - name: Build shaders
+        run: |
+          export CLANG=$MINGW_PREFIX
+          make -j$(nproc) MACHINE=aarch64 shaders
+
+      - name: Build
+        run: |
+          export CLANG=$MINGW_PREFIX
+          make -j$(nproc) MACHINE=aarch64
+          test -f bin/swedenmc.exe
+
+      - name: Package artifact
+        run: |
+          mkdir -p release
+          cp bin/swedenmc.exe release/swedenmc-windows-arm64.exe
+          ldd bin/swedenmc.exe | grep "$MINGW_PREFIX" | awk '{print $3}' | xargs -I{} cp {} release/
+          tar -czf swedenmc-windows-arm64.tar.gz -C release .
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: swedenmc-windows-arm64
+          path: swedenmc-windows-arm64.tar.gz
+          retention-days: 30
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: swedenmc-windows-arm64
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: swedenmc-windows-arm64.tar.gz
+          generate_release_notes: true
